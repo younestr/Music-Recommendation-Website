@@ -32,11 +32,37 @@ const ArtistSchema = new mongoose.Schema({
     artistName: String,
     genre: [String],
     albums: [{
-        albumTitle: String,
-        releaseDate: Date
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Album'
     }]
 });
 const Artist = mongoose.model('Artist', ArtistSchema);
+
+// Define Mongoose schema for Albums
+const AlbumSchema = new mongoose.Schema({
+    albumTitle: String,
+    releaseDate: Date,
+    artist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist'
+    }
+});
+const Album = mongoose.model('Album', AlbumSchema);
+
+// Define Mongoose schema for Songs
+const SongSchema = new mongoose.Schema({
+    title: String,
+    artist: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist'
+    },
+    genre: [String],
+    album: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Album'
+    }
+});
+const Song = mongoose.model('Song', SongSchema);
 
 // Handle user submission
 app.post('/postUser', (req, res) => {
@@ -62,14 +88,7 @@ app.post('/postArtist', (req, res) => {
     const genreArray = Array.isArray(req.body.genre) ? req.body.genre : [req.body.genre];
     const newArtist = new Artist({
         artistName: req.body.artistName,
-        genre: genreArray,
-        albums: [{
-            albumTitle: req.body.albumTitle1,
-            releaseDate: req.body.releaseDate1
-        }, {
-            albumTitle: req.body.albumTitle2,
-            releaseDate: req.body.releaseDate2
-        }]
+        genre: genreArray
     });
 
     newArtist.save()
@@ -83,6 +102,50 @@ app.post('/postArtist', (req, res) => {
         });
 });
 
+// Handle song submission
+app.post('/postSong', async (req, res) => {
+    try {
+        const newSong = new Song({
+            title: req.body.title,
+            artist: req.body.artist,
+            genre: req.body.genre.split(','), // Split genre string into an array
+            album: req.body.album
+            // Add other relevant song information here
+        });
+
+        const savedSong = await newSong.save();
+        console.log('Song saved successfully:', savedSong);
+        res.redirect('/'); // Redirect to the root path after successful submission
+    } catch (err) {
+        console.error('Error saving song:', err);
+        res.status(500).send('Error saving song to database');
+    }
+});
+
+// Route to fetch all artists
+app.get('/getArtists', async (req, res) => {
+    try {
+        const artists = await Artist.find({}, 'artistName'); // Fetch artist names only
+        res.json(artists);
+    } catch (err) {
+        console.error('Error fetching artists:', err);
+        res.status(500).send('Error fetching artists');
+    }
+});
+
+// Route to fetch albums for a specific artist
+app.get('/getAlbums/:artistId', async (req, res) => {
+    try {
+        const artistId = req.params.artistId;
+        const albums = await Album.find({ artist: artistId }, 'albumTitle'); // Fetch album titles only
+        res.json(albums);
+    } catch (err) {
+        console.error('Error fetching albums:', err);
+        res.status(500).send('Error fetching albums');
+    }
+});
+
+// Listen on port
 app.listen(port, () => {
     console.log("Server started");
 });
