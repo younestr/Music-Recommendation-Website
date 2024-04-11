@@ -58,6 +58,44 @@
             <input type="date" id="releaseDate2" name="releaseDate2" required>
             <button type="submit">Submit</button>
         </form>
+        
+        <h2>Add Song</h2>
+        <form action="/postSong" method="post"> <!-- New form for adding songs -->
+            <label for="songTitle">Song Title :</label>
+            <input type="text" id="songTitle" name="title" required>
+            <label for="artist">Artist :</label>
+            <select id="artist" name="artist" required>
+                <!-- Options will be populated dynamically -->
+            </select>
+            <label for="songGenre">Genre(s) :</label>
+            <!-- Use a multiple select dropdown menu for genre selection -->
+            <select id="songGenre" name="genre[]" multiple required class="chosen-select" data-placeholder="Select genres...">
+                <option value=""></option>
+                <option value="Alternative">Alternative</option>
+                <option value="Blues">Blues</option>
+                <option value="Classical">Classical</option>
+                <option value="Country">Country</option>
+                <option value="Dance">Dance</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Folk">Folk</option>
+                <option value="Hip Hop/Rap">Hip Hop/Rap</option>
+                <option value="Indie">Indie</option>
+                <option value="Jazz">Jazz</option>
+                <option value="Latin">Latin</option>
+                <option value="Metal">Metal</option>
+                <option value="Pop">Pop</option>
+                <option value="R&B/Soul">R&B/Soul</option>
+                <option value="Reggae">Reggae</option>
+                <option value="Rock">Rock</option>
+                <option value="World">World</option>
+                <!-- Add more genre options here -->
+            </select>
+            <label for="album">Album :</label>
+            <select id="album" name="album" required>
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button type="submit">Submit</button>
+        </form>
     </div>
     
     <!-- Include Chosen.js -->
@@ -66,6 +104,43 @@
         // Initialize Chosen.js for the select element with the 'chosen-select' class
         $(document).ready(function(){
             $('.chosen-select').chosen();
+            
+            // Populate the artist dropdown
+            $.ajax({
+                url: '/getArtists',
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(artist) {
+                        $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#artist').trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching artists:', err);
+                }
+            });
+            
+            // Populate the album dropdown based on the selected artist
+            $('#artist').change(function() {
+                var selectedArtist = $(this).val();
+                $('#album').empty(); // Clear the dropdown
+                // Fetch albums for the selected artist
+                $.ajax({
+                    url: '/getAlbums/' + selectedArtist,
+                    type: 'GET',
+                    success: function(data) {
+                        data.forEach(function(album) {
+                            $('#album').append('<option value="' + album._id + '">' + album.albumTitle + '</option>');
+                        });
+                        // Trigger chosen:update event after dynamically adding options
+                        $('#album').trigger('chosen:updated');
+                    },
+                    error: function(err) {
+                        console.error('Error fetching albums:', err);
+                    }
+                });
+            });
         });
     </script>
 </body>
