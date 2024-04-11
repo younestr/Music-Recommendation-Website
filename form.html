@@ -5,16 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Music Preferences</title>
     <link rel="stylesheet" href="form.css">
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Chosen.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
 </head>
 <body>
     <div class="container">
-        <form action="/post" method="post"> <!-- Update action to "/post" for form submission -->
+        <h2>Add User</h2>
+        <form action="/postUser" method="post"> <!-- Update action to "/postUser" for user submission -->
             <label for="username">Username :</label>
             <input type="text" id="username" name="username" required>
             <label for="email">Email :</label>
             <input type="email" id="email" name="email" required>
             <button type="submit">Submit</button>
         </form>
+
+        <h2>Add Artist</h2>
+        <form action="/postArtist" method="post"> <!-- New form for adding artists -->
+            <label for="artistName">Artist Name :</label>
+            <input type="text" id="artistName" name="artistName" required>
+            <label for="genre">Genre(s) :</label>
+            <!-- Use Chosen.js for multi-select dropdown -->
+            <select id="genre" name="genre[]" multiple required class="chosen-select" data-placeholder="Begin typing a name to filter...">
+                <option value=""></option>
+                <option value="Alternative">Alternative</option>
+                <option value="Blues">Blues</option>
+                <option value="Classical">Classical</option>
+                <option value="Country">Country</option>
+                <option value="Dance">Dance</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Folk">Folk</option>
+                <option value="Hip Hop/Rap">Hip Hop/Rap</option>
+                <option value="Indie">Indie</option>
+                <option value="Jazz">Jazz</option>
+                <option value="Latin">Latin</option>
+                <option value="Metal">Metal</option>
+                <option value="Pop">Pop</option>
+                <option value="R&B/Soul">R&B/Soul</option>
+                <option value="Reggae">Reggae</option>
+                <option value="Rock">Rock</option>
+                <option value="World">World</option>
+                <!-- Add more genre options here -->
+            </select>
+            <label for="albumTitle1">Album Title 1 :</label>
+            <input type="text" id="albumTitle1" name="albumTitle1" required>
+            <label for="releaseDate1">Release Date 1 :</label>
+            <input type="date" id="releaseDate1" name="releaseDate1" required>
+            <label for="albumTitle2">Album Title 2 :</label>
+            <input type="text" id="albumTitle2" name="albumTitle2" required>
+            <label for="releaseDate2">Release Date 2 :</label>
+            <input type="date" id="releaseDate2" name="releaseDate2" required>
+            <button type="submit">Submit</button>
+        </form>
     </div>
+    
+    <!-- Include Chosen.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+    <script>
+        // Initialize Chosen.js for the select element with the 'chosen-select' class
+        $(document).ready(function(){
+            $('.chosen-select').chosen();
+        });
+    </script>
 </body>
 </html>
