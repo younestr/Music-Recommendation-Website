@@ -64,6 +64,29 @@ const SongSchema = new mongoose.Schema({
 });
 const Song = mongoose.model('Song', SongSchema);
 
+// Define Mongoose schema for UserPreferences
+const UserPreferencesSchema = new mongoose.Schema({
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    favorite_artists: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artist'
+    }],
+    favorite_genres: [String],
+    favorite_songs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Song'
+    }],
+    favorite_albums: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Album'
+    }]
+});
+
+const UserPreferences = mongoose.model('UserPreferences', UserPreferencesSchema);
+
 // Handle user submission
 app.post('/postUser', (req, res) => {
     const newUser = new User({
