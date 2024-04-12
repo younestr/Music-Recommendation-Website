@@ -1,39 +1,41 @@
-body{
-    background-color: #222121;
+body {
+    background-image: url('music.jpg');
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Keep the background fixed while scrolling */
     font-family: Arial, Helvetica, sans-serif;
 }
 
-
-.container{
+.container {
     padding: 10px;
     max-width: 500px;
     margin: 100px auto;
-    background-color: #333;
+    background-color: rgba(51, 51, 51, 0.8); /* Adjust the background transparency */
     color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 5px #fff;
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
     gap: 10px;
     padding: 15px;
 }
 
-form label{
+form label {
     font-size: 25px;
     margin-bottom: 10px;
 }
 
-form input{
+form input {
     padding: 8px;
     border-radius: 10px;
     border: none;
     outline: none;
 }
 
-form button{
+form button {
     padding: 8px;
     background-color: #3494db;
     border: none;
@@ -43,7 +45,6 @@ form button{
     color: #fff;
 }
 
-form select{
+form select {
     padding: 8px;
 }
-
