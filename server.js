@@ -128,9 +128,8 @@ app.post('/postSong', async (req, res) => {
         const newSong = new Song({
             title: req.body.title,
             artist: req.body.artist,
-            genre: req.body.genre.split(','), // Split genre string into an array
+            genre: Array.isArray(req.body.genre) ? req.body.genre : [req.body.genre], // Ensure genre is an array
             album: req.body.album
-            // Add other relevant song information here
         });
 
         const savedSong = await newSong.save();
@@ -141,6 +140,7 @@ app.post('/postSong', async (req, res) => {
         res.status(500).send('Error saving song to database');
     }
 });
+
 
 // Route to fetch all artists
 app.get('/getArtists', async (req, res) => {
