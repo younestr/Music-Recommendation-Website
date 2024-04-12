@@ -8,7 +8,7 @@ const app = express();
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/musicRec_database');
+mongoose.connect('mongodb://127.0.0.1:27017/musicRec_database', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -164,7 +164,6 @@ app.post('/postSong', async (req, res) => {
     }
 });
 
-
 // Route to fetch all artists
 app.get('/getArtists', async (req, res) => {
     try {
@@ -188,8 +187,18 @@ app.get('/getAlbums/:artistId', async (req, res) => {
     }
 });
 
+// Route to fetch all songs
+app.get('/getSongs', async (req, res) => {
+    try {
+        const songs = await Song.find({}, 'title'); // Fetch song titles only
+        res.json(songs);
+    } catch (err) {
+        console.error('Error fetching songs:', err);
+        res.status(500).send('Error fetching songs');
+    }
+});
+
 // Listen on port
 app.listen(port, () => {
     console.log("Server started");
 });
- 
