@@ -187,6 +187,17 @@ app.get('/getAlbums/:artistId', async (req, res) => {
     }
 });
 
+// Route to fetch all albums
+app.get('/getAlbums', async (req, res) => {
+    try {
+        const albums = await Album.find({}, 'albumTitle'); // Fetch album titles only
+        res.json(albums);
+    } catch (err) {
+        console.error('Error fetching albums:', err);
+        res.status(500).send('Error fetching albums');
+    }
+});
+
 // Route to fetch all songs
 app.get('/getSongs', async (req, res) => {
     try {
