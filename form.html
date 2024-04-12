@@ -96,6 +96,33 @@
             </select>
             <button type="submit">Submit</button>
         </form>
+        
+        <h2>User Preferences</h2>
+        <form action="/postUserPreferences" method="post"> <!-- New form for adding user preferences -->
+            <label for="userId">User ID :</label>
+            <input type="text" id="userId" name="userId" required>
+            <label for="favoriteArtists">Favorite Artists :</label>
+            <!-- Use a multiple select dropdown menu for selecting favorite artists -->
+            <select id="favoriteArtists" name="favoriteArtists[]" multiple required class="chosen-select" data-placeholder="Select favorite artists...">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <label for="favoriteGenres">Favorite Genres :</label>
+            <!-- Use a multiple select dropdown menu for selecting favorite genres -->
+            <select id="favoriteGenres" name="favoriteGenres[]" multiple required class="chosen-select" data-placeholder="Select favorite genres...">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <label for="favoriteSongs">Favorite Songs :</label>
+            <!-- Use a multiple select dropdown menu for selecting favorite songs -->
+            <select id="favoriteSongs" name="favoriteSongs[]" multiple required class="chosen-select" data-placeholder="Select favorite songs...">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <label for="favoriteAlbums">Favorite Albums :</label>
+            <!-- Use a multiple select dropdown menu for selecting favorite albums -->
+            <select id="favoriteAlbums" name="favoriteAlbums[]" multiple required class="chosen-select" data-placeholder="Select favorite albums...">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button type="submit">Submit</button>
+        </form>
     </div>
     
     <!-- Include Chosen.js -->
@@ -141,7 +168,31 @@
                     }
                 });
             });
+
+            // Function to populate dropdown options for user preferences
+            function populateDropdown(url, selectId, optionValueField, optionTextField) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        data.forEach(function(item) {
+                            $('#' + selectId).append('<option value="' + item[optionValueField] + '">' + item[optionTextField] + '</option>');
+                        });
+                        // Trigger chosen:update event after dynamically adding options
+                        $('#' + selectId).trigger('chosen:updated');
+                    },
+                    error: function(err) {
+                        console.error('Error fetching data:', err);
+                    }
+                });
+            }
+
+            // Populate dropdowns for favorite artists, genres, songs, and albums
+            populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
+            populateDropdown('/getGenres', 'favoriteGenres', 'name', 'name');
+            populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
+            populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
         });
     </script>
 </body>
-</html>  
+</html>
