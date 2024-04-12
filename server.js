@@ -169,3 +169,4 @@ app.get('/getAlbums/:artistId', async (req, res) => {
 app.listen(port, () => {
     console.log("Server started");
 });
+ 
