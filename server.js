@@ -83,24 +83,44 @@ app.post('/postUser', (req, res) => {
 });
 
 // Handle artist submission
-app.post('/postArtist', (req, res) => {
-    // Parse the genre field as an array
+app.post('/postArtist', async (req, res) => {
     const genreArray = Array.isArray(req.body.genre) ? req.body.genre : [req.body.genre];
     const newArtist = new Artist({
         artistName: req.body.artistName,
-        genre: genreArray
+        genre: genreArray,
+        albums: [] // Initialize albums array
     });
 
-    newArtist.save()
-        .then(artist => {
-            console.log('Artist saved successfully:', artist);
-            res.redirect('/'); // Redirect to the root path after successful submission
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).send('Error saving artist to database');
-        });
+    try {
+        const savedArtist = await newArtist.save();
+        console.log('Artist saved successfully:', savedArtist);
+        // Save albums for the artist
+        await saveAlbums(savedArtist._id, req.body);
+        res.redirect('/'); // Redirect to the root path after successful submission
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error saving artist to database');
+    }
 });
+
+// Function to save albums associated with the artist
+async function saveAlbums(artistId, body) {
+    // Extract album data from the request body
+    const albumsData = [
+        { title: body.albumTitle1, releaseDate: body.releaseDate1 },
+        { title: body.albumTitle2, releaseDate: body.releaseDate2 }
+    ];
+
+    // Loop through each album data and save it
+    for (const albumData of albumsData) {
+        const newAlbum = new Album({
+            albumTitle: albumData.title,
+            releaseDate: albumData.releaseDate,
+            artist: artistId
+        });
+        await newAlbum.save();
+    }
+}
 
 // Handle song submission
 app.post('/postSong', async (req, res) => {
@@ -137,7 +157,7 @@ app.get('/getArtists', async (req, res) => {
 app.get('/getAlbums/:artistId', async (req, res) => {
     try {
         const artistId = req.params.artistId;
-        const albums = await Album.find({ artist: artistId }, 'albumTitle'); // Fetch album titles only
+        const albums = await Album.find({ artist: artistId });
         res.json(albums);
     } catch (err) {
         console.error('Error fetching albums:', err);
