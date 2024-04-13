@@ -169,6 +169,39 @@
                 });
             });
 
+            // Function to populate dropdown options for genres
+            function populateGenresDropdown(selectId) {
+            // Array of genre options
+            const genres = [
+                "Alternative",
+                "Blues",
+                "Classical",
+                "Country",
+                "Dance",
+                "Electronic",
+                "Folk",
+                "Hip Hop/Rap",
+                "Indie",
+                "Jazz",
+                "Latin",
+                "Metal",
+                "Pop",
+                "R&B/Soul",
+                "Reggae",
+                "Rock",
+                "World"
+            ];
+            
+            // Populate the dropdown with genre options
+            const select = $('#' + selectId);
+            genres.forEach(genre => {
+                select.append('<option value="' + genre + '">' + genre + '</option>');
+            });
+
+            // Trigger chosen:update event after dynamically adding options
+            select.trigger('chosen:updated');
+        }
+
             // Function to populate dropdown options for user preferences
             function populateDropdown(url, selectId, optionValueField, optionTextField) {
                 $.ajax({
@@ -189,7 +222,7 @@
 
             // Populate dropdowns for favorite artists, genres, songs, and albums
             populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
-            populateDropdown('/getGenres', 'favoriteGenres', 'name', 'name');
+            populateGenresDropdown('favoriteGenres');
             populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
             populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
         });
