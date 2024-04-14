@@ -99,8 +99,10 @@
         
         <h2>User Preferences</h2>
         <form action="/postUserPreferences" method="post"> <!-- New form for adding user preferences -->
-            <label for="userId">User ID :</label>
-            <input type="text" id="userId" name="userId" required>
+            <label for="username">Username :</label>
+            <select id="username" name="username" required class="chosen-select" data-placeholder="Select username...">
+                <!-- Options will be populated dynamically -->
+            </select>
             <label for="favoriteArtists">Favorite Artists :</label>
             <!-- Use a multiple select dropdown menu for selecting favorite artists -->
             <select id="favoriteArtists" name="favoriteArtists[]" multiple required class="chosen-select" data-placeholder="Select favorite artists...">
@@ -131,6 +133,22 @@
         // Initialize Chosen.js for the select element with the 'chosen-select' class
         $(document).ready(function(){
             $('.chosen-select').chosen();
+
+            // Populate the username dropdown
+            $.ajax({
+                url: '/getUsers', // Modify URL as needed
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(user) {
+                        $('#username').append('<option value="' + user.username + '">' + user.username + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#username').trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching users:', err);
+                }
+            });
             
             // Populate the artist dropdown
             $.ajax({
