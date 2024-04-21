@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="form.css">
     <!-- Include jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include jQuery UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <!-- Include Chosen.js CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
 </head>
@@ -100,7 +103,7 @@
         <h2>User Preferences</h2>
         <form action="/postUserPreferences" method="post"> <!-- New form for adding user preferences -->
             <label for="username">Username :</label>
-            <select id="username" name="username" required class="chosen-select" data-placeholder="Select username...">
+            <select id="username" name="username[]" multiple required class="chosen-select" data-placeholder="SELECT A FUCKING USERNAME">
                 <!-- Options will be populated dynamically -->
             </select>
             <label for="favoriteArtists">Favorite Artists :</label>
@@ -134,61 +137,70 @@
         $(document).ready(function(){
             $('.chosen-select').chosen();
 
-            // Populate the username dropdown
-            $.ajax({
-                url: '/getUsers', // Modify URL as needed
-                type: 'GET',
-                success: function(data) {
-                    data.forEach(function(user) {
-                        $('#username').append('<option value="' + user.username + '">' + user.username + '</option>');
-                    });
-                    // Trigger chosen:update event after dynamically adding options
-                    $('#username').trigger('chosen:updated');
-                },
-                error: function(err) {
-                    console.error('Error fetching users:', err);
-                }
-            });
-            
-            // Populate the artist dropdown
-            $.ajax({
-                url: '/getArtists',
-                type: 'GET',
-                success: function(data) {
-                    data.forEach(function(artist) {
-                        $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
-                    });
-                    // Trigger chosen:update event after dynamically adding options
-                    $('#artist').trigger('chosen:updated');
-                },
-                error: function(err) {
-                    console.error('Error fetching artists:', err);
-                }
-            });
-            
-            // Populate the album dropdown based on the selected artist
-            $('#artist').change(function() {
-                var selectedArtist = $(this).val();
-                $('#album').empty(); // Clear the dropdown
-                // Fetch albums for the selected artist
-                $.ajax({
-                    url: '/getAlbums/' + selectedArtist,
-                    type: 'GET',
-                    success: function(data) {
-                        data.forEach(function(album) {
-                            $('#album').append('<option value="' + album._id + '">' + album.albumTitle + '</option>');
-                        });
-                        // Trigger chosen:update event after dynamically adding options
-                        $('#album').trigger('chosen:updated');
-                    },
-                    error: function(err) {
-                        console.error('Error fetching albums:', err);
-                    }
-                });
-            });
+        // Populate the username dropdown
+        // Define an array to hold the usernames
+        var usernames = [];
 
-            // Function to populate dropdown options for genres
-            function populateGenresDropdown(selectId) {
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            success: function(data) {
+                data.forEach(function(user) {
+                    usernames.push(user.username);
+                });
+                console.log('Usernames fetched successfully:', usernames);
+
+                // Initialize autocomplete
+                $('#username').autocomplete({
+                    source: usernames
+                });
+                console.log('Autocomplete initialized with usernames:', usernames);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching usernames:', error);
+            }
+        });
+
+
+        // Populate the artist dropdown
+        $.ajax({
+            url: '/getArtists',
+            type: 'GET',
+            success: function(data) {
+                data.forEach(function(artist) {
+                    $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
+                });
+                // Trigger chosen:update event after dynamically adding options
+                $('#artist').trigger('chosen:updated');
+            },
+            error: function(err) {
+                console.error('Error fetching artists:', err);
+            }
+        });
+        
+        // Populate the album dropdown based on the selected artist
+        $('#artist').change(function() {
+            var selectedArtist = $(this).val();
+            $('#album').empty(); // Clear the dropdown
+            // Fetch albums for the selected artist
+            $.ajax({
+                url: '/getAlbums/' + selectedArtist,
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(album) {
+                        $('#album').append('<option value="' + album._id + '">' + album.albumTitle + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#album').trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching albums:', err);
+                }
+            });
+        });
+
+        // Function to populate dropdown options for genres
+        function populateGenresDropdown(selectId) {
             // Array of genre options
             const genres = [
                 "Alternative",
@@ -220,30 +232,30 @@
             select.trigger('chosen:updated');
         }
 
-            // Function to populate dropdown options for user preferences
-            function populateDropdown(url, selectId, optionValueField, optionTextField) {
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(data) {
-                        data.forEach(function(item) {
-                            $('#' + selectId).append('<option value="' + item[optionValueField] + '">' + item[optionTextField] + '</option>');
-                        });
-                        // Trigger chosen:update event after dynamically adding options
-                        $('#' + selectId).trigger('chosen:updated');
-                    },
-                    error: function(err) {
-                        console.error('Error fetching data:', err);
-                    }
-                });
-            }
+        // Function to populate dropdown options
+        function populateDropdown(url, selectId, optionValueField, optionTextField) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(item) {
+                        $('#' + selectId).append('<option value="' + item[optionValueField] + '">' + item[optionTextField] + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#' + selectId).trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching data:', err);
+                }
+            });
+        }
 
-            // Populate dropdowns for favorite artists, genres, songs, and albums
-            populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
-            populateGenresDropdown('favoriteGenres');
-            populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
-            populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
-        });
+        // Populate dropdowns for favorite artists, genres, songs, and albums
+        populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
+        populateGenresDropdown('favoriteGenres');
+        populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
+        populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
+    });
     </script>
 </body>
 </html>
