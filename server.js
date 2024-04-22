@@ -221,6 +221,28 @@ app.get('/getSongs', async (req, res) => {
     }
 });
 
+// Handle user preferences submission
+app.post('/postUserPreferences', async (req, res) => {
+    try {
+        // Extract user preferences data from the request body
+        const userPreferencesData = req.body;
+
+        // Create a new UserPreferences document with the extracted data
+        const newUserPreferences = new UserPreferences(userPreferencesData);
+
+        // Save the new user preferences document to the database
+        await newUserPreferences.save();
+
+        // Respond with a success message
+        res.send('User preferences saved successfully');
+    } catch (err) {
+        // Handle errors
+        console.error('Error saving user preferences:', err);
+        res.status(500).send('Error saving user preferences');
+    }
+});
+
+
 // Listen on port
 app.listen(port, () => {
     console.log("Server started");
