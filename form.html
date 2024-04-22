@@ -176,7 +176,7 @@
             type: 'GET',
             success: function(data) {
                 data.forEach(function(artist) {
-                    //$('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
+                    $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
                 });
                 // Trigger chosen:update event after dynamically adding options
                 $('#artist').trigger('chosen:updated');
