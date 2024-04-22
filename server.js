@@ -221,6 +221,21 @@ app.get('/getSongs', async (req, res) => {
     }
 });
 
+// Route to fetch user preferences with populated fields
+app.get('/getUserPreferences', async (req, res) => {
+    try {
+        const userPreferences = await UserPreferences.find({})
+            .populate('favoriteArtists', 'artistName')
+            .populate('favoriteSongs', 'title')
+            .populate('favoriteAlbums', 'albumTitle');
+
+        res.json(userPreferences);
+    } catch (err) {
+        console.error('Error fetching user preferences:', err);
+        res.status(500).send('Error fetching user preferences');
+    }
+});
+
 // Handle user preferences submission
 app.post('/postUserPreferences', async (req, res) => {
     try {
