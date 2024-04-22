@@ -70,16 +70,16 @@ const UserPreferencesSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    favorite_artists: [{
+    favoriteArtists: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Artist'
     }],
-    favorite_genres: [String],
-    favorite_songs: [{
+    favoriteGenres: [String],
+    favoriteSongs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Song'
     }],
-    favorite_albums: [{
+    favoriteAlbums: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Album'
     }]
@@ -234,7 +234,9 @@ app.post('/postUserPreferences', async (req, res) => {
         await newUserPreferences.save();
 
         // Respond with a success message
-        res.send('User preferences saved successfully');
+        console.log('user preferences:', userPreferencesData);
+        res.send(userPreferencesData);
+
     } catch (err) {
         // Handle errors
         console.error('Error saving user preferences:', err);
