@@ -164,6 +164,18 @@ app.post('/postSong', async (req, res) => {
     }
 });
 
+// Route to fetch all users
+app.get('/getUsers', async (req, res) => {
+    try {
+        const users = await User.find({}, 'username'); // Fetch usernames only
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).send('Error fetching users');
+    }
+});
+
+
 // Route to fetch all artists
 app.get('/getArtists', async (req, res) => {
     try {
