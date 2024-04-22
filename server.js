@@ -90,8 +90,8 @@ const UserPreferences = mongoose.model('UserPreferences', UserPreferencesSchema)
 // Handle user submission
 app.post('/postUser', (req, res) => {
     const newUser = new User({
-        username: req.body.username,
-        email: req.body.email
+        username: req.body.usernameo, // Save the username
+        email: req.body.email // Save the email
     });
 
     newUser.save()
