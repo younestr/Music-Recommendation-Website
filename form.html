@@ -128,6 +128,15 @@
             </select>
             <button type="submit">Submit</button>
         </form>
+        <h2>Get Song Recommendations</h2>
+        <form id="songRecommendationForm">
+            <label for="songName">Song Name:</label>
+            <input type="text" id="songName" name="songName" required>
+            <button type="button" onclick="getSongRecommendations()">Get Recommendations</button>
+        </form>
+        
+        <div id="recommendationsContainer"></div>
+        
     </div>
     
     <!-- Include Chosen.js -->
@@ -229,6 +238,40 @@
                 "Rock",
                 "World"
             ];
+
+        // Function to get song recommendations
+        function getSongRecommendations() {
+            const songName = $('#songName').val();
+
+            $.ajax({
+                url: '/getSongRecommendations/' + encodeURIComponent(songName),
+                type: 'GET',
+                success: function(recommendations) {
+                    displayRecommendations(recommendations);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching recommendations:', error);
+                }
+            });
+        }
+
+        // Function to display recommendations on the page
+        function displayRecommendations(recommendations) {
+            const recommendationsContainer = $('#recommendationsContainer');
+            recommendationsContainer.empty();
+
+            if (recommendations.length > 0) {
+                recommendationsContainer.append('<h3>Recommended similar songs:</h3>');
+                const list = $('<ul></ul>');
+                recommendations.forEach(function(recommendation) {
+                    list.append('<li>' + recommendation.title + ' by ' + recommendation.artist + '</li>');
+                });
+                recommendationsContainer.append(list);
+            } else {
+                recommendationsContainer.append('<p>No similar songs found.</p>');
+            }
+        }
+
             
             // Populate the dropdown with genre options
             const select = $('#' + selectId);
