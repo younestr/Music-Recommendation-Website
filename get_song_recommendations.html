@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Preferences</title>
+    <link rel="stylesheet" href="form.css">
+    <!-- Include jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include jQuery UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Include Chosen.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Get Song Recommendations</h2>
+        <form id="songRecommendationForm">
+            <label for="songName">Song Name:</label>
+            <input type="text" id="songName" name="songName" required>
+            <button type="button" onclick="getSongRecommendations()">Get Recommendations</button>
+        </form>
+        
+        <div id="recommendationsContainer"></div>
+    </div>
+    
+    <!-- Include Chosen.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+    <script>
+        // Initialize Chosen.js for the select element with the 'chosen-select' class
+        $(document).ready(function(){
+            $('.chosen-select').chosen();
+
+        // Function to populate the username dropdown
+        function populateUsernameDropdown(usernames) {
+            // Clear existing options
+            $('#username').empty();
+            //console.log('Usernames fetched successfully:', usernames);
+            
+            // Populate the select dropdown with usernames
+            usernames.forEach(function(username) {
+                $('#username').append('<option value="' + username + '">' + username + '</option>');
+            });
+
+            // Trigger chosen:updated event after dynamically adding options
+            $('#username').trigger('chosen:updated');
+        }
+
+    // Fetch usernames
+    $.ajax({
+        url: '/getUsers',
+        type: 'GET',
+        success: function(data) {
+            var usernames = data.map(function(user) {
+                return user.username;
+            });
+           
+            populateUsernameDropdown(usernames);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching usernames:', error);
+        }
+    });
+
+
+
+        // Populate the artist dropdown
+        $.ajax({
+            url: '/getArtists',
+            type: 'GET',
+            success: function(data) {
+                data.forEach(function(artist) {
+                    $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
+                });
+                // Trigger chosen:update event after dynamically adding options
+                $('#artist').trigger('chosen:updated');
+            },
+            error: function(err) {
+                console.error('Error fetching artists:', err);
+            }
+        });
+        
+        // Populate the album dropdown based on the selected artist
+        $('#artist').change(function() {
+            var selectedArtist = $(this).val();
+            $('#album').empty(); // Clear the dropdown
+            // Fetch albums for the selected artist
+            $.ajax({
+                url: '/getAlbums/' + selectedArtist,
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(album) {
+                        $('#album').append('<option value="' + album._id + '">' + album.albumTitle + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#album').trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching albums:', err);
+                }
+            });
+        });
+
+        // Function to populate dropdown options for genres
+        function populateGenresDropdown(selectId) {
+            // Array of genre options
+            const genres = [
+                "Alternative",
+                "Blues",
+                "Classical",
+                "Country",
+                "Dance",
+                "Electronic",
+                "Folk",
+                "Hip Hop/Rap",
+                "Indie",
+                "Jazz",
+                "Latin",
+                "Metal",
+                "Pop",
+                "R&B/Soul",
+                "Reggae",
+                "Rock",
+                "World"
+            ];
+
+        // Function to get song recommendations
+        function getSongRecommendations() {
+            const songName = $('#songName').val();
+
+            $.ajax({
+                url: '/getSongRecommendations/' + encodeURIComponent(songName),
+                type: 'GET',
+                success: function(recommendations) {
+                    displayRecommendations(recommendations);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching recommendations:', error);
+                }
+            });
+        }
+
+        // Function to display recommendations on the page
+        function displayRecommendations(recommendations) {
+            const recommendationsContainer = $('#recommendationsContainer');
+            recommendationsContainer.empty();
+
+            if (recommendations.length > 0) {
+                recommendationsContainer.append('<h3>Recommended similar songs:</h3>');
+                const list = $('<ul></ul>');
+                recommendations.forEach(function(recommendation) {
+                    list.append('<li>' + recommendation.title + ' by ' + recommendation.artist + '</li>');
+                });
+                recommendationsContainer.append(list);
+            } else {
+                recommendationsContainer.append('<p>No similar songs found.</p>');
+            }
+        }
+
+            
+            // Populate the dropdown with genre options
+            const select = $('#' + selectId);
+            genres.forEach(genre => {
+                select.append('<option value="' + genre + '">' + genre + '</option>');
+            });
+
+            // Trigger chosen:update event after dynamically adding options
+            select.trigger('chosen:updated');
+        }
+
+        // Function to populate dropdown options
+        function populateDropdown(url, selectId, optionValueField, optionTextField) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(data) {
+                    data.forEach(function(item) {
+                        $('#' + selectId).append('<option value="' + item[optionValueField] + '">' + item[optionTextField] + '</option>');
+                    });
+                    // Trigger chosen:update event after dynamically adding options
+                    $('#' + selectId).trigger('chosen:updated');
+                },
+                error: function(err) {
+                    console.error('Error fetching data:', err);
+                }
+            });
+        }
+
+        // Populate dropdowns for favorite artists, genres, songs, and albums
+        populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
+        populateGenresDropdown('favoriteGenres');
+        populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
+        populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
+    });
+    </script>
+</body>
+</html>
