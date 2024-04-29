@@ -259,6 +259,18 @@ app.post('/postUserPreferences', async (req, res) => {
     }
 });
 
+// Route to get song recommendations
+app.get('/getSongRecommendations/:songName', async (req, res) => {
+    try {
+        const songName = req.params.songName;
+        // Call the recommend_similar_songs function with the provided song name
+        const recommendations = await recommend_similar_songs(songName);
+        res.json(recommendations);
+    } catch (err) {
+        console.error('Error fetching song recommendations:', err);
+        res.status(500).send('Error fetching song recommendations');
+    }
+});
 
 // Listen on port
 app.listen(port, () => {
