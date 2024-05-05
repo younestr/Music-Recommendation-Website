@@ -2,7 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
+const bcrypt = require('bcrypt');
 const port = 3019;
+
+
 
 const app = express();
 app.use(express.static(__dirname));
@@ -20,10 +23,38 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'form.html'));
 });
 
+
+// Serve the add_artist.html file
+app.get('/add_artist', (req, res) => {
+    res.sendFile(path.join(__dirname, 'add_artist.html'));
+});
+
+// Serve the add_song.html file
+app.get('/add_song', (req, res) => {
+    res.sendFile(path.join(__dirname, 'add_song.html'));
+});
+
+// Serve the user_preferences.html file
+app.get('/user_preferences', (req, res) => {
+    res.sendFile(path.join(__dirname, 'user_preferences.html'));
+});
+
+// Serve the get_song_recommendations.html file
+app.get('/get_song_recommendations', (req, res) => {
+    res.sendFile(path.join(__dirname, 'get_song_recommendations.html'));
+});
+
+// Serve the registration form
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'add_user.html'));
+});
+
+
 // Define Mongoose schema for Users
 const UserSchema = new mongoose.Schema({
     username: String,
-    email: String
+    email: String,
+    password: String // Hashed password will be stored
 });
 const User = mongoose.model('User', UserSchema);
 
@@ -86,6 +117,38 @@ const UserPreferencesSchema = new mongoose.Schema({
 });
 
 const UserPreferences = mongoose.model('UserPreferences', UserPreferencesSchema);
+
+// Handle user registration
+app.post('/register', async (req, res) => {
+    try {
+        const { registerUsername, registerEmail, registerPassword } = req.body;
+
+        // Check if the username or email already exists
+        const existingUser = await User.findOne({ $or: [{ username: registerUsername }, { email: registerEmail }] });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username or email already exists' });
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(registerPassword, 10);
+
+        // Create a new user
+        const newUser = new User({
+            username: registerUsername,
+            email: registerEmail,
+            password: hashedPassword,
+        });
+
+        // Save the user to the database
+        await newUser.save();
+
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 // Handle user submission
 app.post('/postUser', (req, res) => {
