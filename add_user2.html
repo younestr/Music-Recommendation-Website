@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>User Authentication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="user2.css">
+</head>
+<body>
+	<div class="section">
+		<div class="container">
+			<div class="row full-height justify-content-center">
+				<div class="col-12 text-center align-self-center py-5">
+					<div class="section pb-5 pt-5 pt-sm-2 text-center">
+						<h6 class="mb-0 pb-3"><span>Log In </span><span>Sign Up</span></h6>
+                        <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" onclick="toggleForm()">
+                        <label for="reg-log"></label>
+						<div class="card-3d-wrap mx-auto">
+							<div class="card-3d-wrapper">
+								<div class="card-front" id="loginForm">
+									<div class="center-wrap">
+										<div class="section text-center">
+											<h4 class="mb-4 pb-3">Log In</h4>
+											<div class="form-group">
+												<input type="Username" class="form-style" placeholder="Username">
+												<i class="input-icon uil uil-user"></i>
+											</div>	
+											<div class="form-group mt-2">
+                                                <input type="password" class="form-style" placeholder="Password">
+												<i class="input-icon uil uil-lock-alt"></i>
+											</div>
+                                            <button class="btn mt-4" onclick="login()">Login</button>
+                      <p class="mb-0 mt-4 text-center">Forgot your password?</p>
+				      					</div>
+			      					</div>
+			      				</div>
+								<div class="card-back" id="registerForm">
+									<div class="center-wrap">
+										<div class="section text-center">
+											<h4 class="mb-3 pb-3">Sign Up</h4>
+											<div class="form-group">
+												<input type="text" class="form-style" id="registerUsername"  placeholder="Username">
+												<i class="input-icon uil uil-user"></i>
+											</div>
+                      <div class="form-group mt-2">
+												<input type="email" class="form-style" id="registerEmail" placeholder="Email">
+												<i class="input-icon uil uil-at"></i>
+											</div>
+											<div class="form-group mt-2">
+												<input type="password" class="form-style"  id="registerPassword" placeholder="Password">
+												<i class="input-icon uil uil-lock-alt"></i>
+											</div>
+                                            <button class="btn mt-4" onclick="register()">Register</button>
+				      					</div>
+			      					</div>
+			      				</div>
+			      			</div>
+			      		</div>
+			      	</div>
+		      	</div>
+	      	</div>
+	    </div>
+	</div>
+<script>
+// Define the toggleForm function
+function toggleForm() {
+    var loginForm = document.getElementById('loginForm');
+    var registerForm = document.getElementById('registerForm');
+    var regLogCheckbox = document.getElementById('reg-log');
+
+    if (regLogCheckbox.checked) {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+    } else {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+    }
+}
+
+// Define the register function
+function register() {
+    // Retrieve user input
+    const username = document.getElementById("registerUsername").value;
+    const email = document.getElementById("registerEmail").value;
+    const password = document.getElementById("registerPassword").value;
+
+    // Construct the request body
+    const requestBody = {
+        registerUsername: username,
+        registerEmail: email,
+        registerPassword: password
+    };
+
+    // Make a POST request to the server
+    fetch('/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log('User registered successfully');
+        // Optionally, you can redirect to a different page or show a success message
+    })
+    .catch(error => {
+        console.error('There was a problem with your fetch operation:', error);
+        // Handle errors, e.g., display an error message to the user
+    });
+}
+</script>
+</body>
+</html>
