@@ -3,310 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Preferences</title>
-    <link rel="stylesheet" href="form.css">
-    <!-- Include jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Include jQuery UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <!-- Include Chosen.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+    <title>TuneScape</title>
+    <link rel="stylesheet" href="main.css"> <!-- Update CSS file name -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="icon" type="image/png" href="favicon-32x32.png"> <!-- Add favicon link -->
+    <script src="main.js"></script> <!-- Add this line to link the JavaScript file -->
+    <script src="animations.js"></script> <!-- Add this line to link the JavaScript file -->
 </head>
 <body>
-    <div class="container">
-        <h2>Add User</h2>
-        <form action="/postUser" method="post"> <!-- Update action to "/postUser" for user submission -->
-            <label for="usernameo">Username :</label>
-            <input type="text" id="usernameo" name="usernameo" required>
-            <label for="email">Email :</label>
-            <input type="email" id="email" name="email" required>
-            <button type="submit">Submit</button>
-        </form>
-
-        <h2>Add Artist</h2>
-        <form action="/postArtist" method="post"> <!-- New form for adding artists -->
-            <label for="artistName">Artist Name :</label>
-            <input type="text" id="artistName" name="artistName" required>
-            <label for="genre">Genre(s) :</label>
-            <!-- Use Chosen.js for multi-select dropdown -->
-            <select id="genre" name="genre[]" multiple required class="chosen-select" data-placeholder="Begin typing a name to filter...">
-                <option value=""></option>
-                <option value="Alternative">Alternative</option>
-                <option value="Blues">Blues</option>
-                <option value="Classical">Classical</option>
-                <option value="Country">Country</option>
-                <option value="Dance">Dance</option>
-                <option value="Electronic">Electronic</option>
-                <option value="Folk">Folk</option>
-                <option value="Hip Hop/Rap">Hip Hop/Rap</option>
-                <option value="Indie">Indie</option>
-                <option value="Jazz">Jazz</option>
-                <option value="Latin">Latin</option>
-                <option value="Metal">Metal</option>
-                <option value="Pop">Pop</option>
-                <option value="R&B/Soul">R&B/Soul</option>
-                <option value="Reggae">Reggae</option>
-                <option value="Rock">Rock</option>
-                <option value="World">World</option>
-                <!-- Add more genre options here -->
-            </select>
-            <label for="albumTitle1">Album Title 1 :</label>
-            <input type="text" id="albumTitle1" name="albumTitle1" required>
-            <label for="releaseDate1">Release Date 1 :</label>
-            <input type="date" id="releaseDate1" name="releaseDate1" required>
-            <label for="albumTitle2">Album Title 2 :</label>
-            <input type="text" id="albumTitle2" name="albumTitle2" required>
-            <label for="releaseDate2">Release Date 2 :</label>
-            <input type="date" id="releaseDate2" name="releaseDate2" required>
-            <button type="submit">Submit</button>
-        </form>
-        
-        <h2>Add Song</h2>
-        <form action="/postSong" method="post"> <!-- New form for adding songs -->
-            <label for="songTitle">Song Title :</label>
-            <input type="text" id="songTitle" name="title" required>
-            <label for="artist">Artist :</label>
-            <select id="artist" name="artist" required>
-                <!-- Options will be populated dynamically -->
-            </select>
-            <label for="songGenre">Genre(s) :</label>
-            <!-- Use a multiple select dropdown menu for genre selection -->
-            <select id="songGenre" name="genre[]" multiple required class="chosen-select" data-placeholder="Select genres...">
-                <option value=""></option>
-                <option value="Alternative">Alternative</option>
-                <option value="Blues">Blues</option>
-                <option value="Classical">Classical</option>
-                <option value="Country">Country</option>
-                <option value="Dance">Dance</option>
-                <option value="Electronic">Electronic</option>
-                <option value="Folk">Folk</option>
-                <option value="Hip Hop/Rap">Hip Hop/Rap</option>
-                <option value="Indie">Indie</option>
-                <option value="Jazz">Jazz</option>
-                <option value="Latin">Latin</option>
-                <option value="Metal">Metal</option>
-                <option value="Pop">Pop</option>
-                <option value="R&B/Soul">R&B/Soul</option>
-                <option value="Reggae">Reggae</option>
-                <option value="Rock">Rock</option>
-                <option value="World">World</option>
-                <!-- Add more genre options here -->
-            </select>
-            <label for="album">Album :</label>
-            <select id="album" name="album" required>
-                <!-- Options will be populated dynamically -->
-            </select>
-            <button type="submit">Submit</button>
-        </form>
-        
-        <h2>User Preferences</h2>
-        <form action="/postUserPreferences" method="post"> <!-- New form for adding user preferences -->
-            <label for="username">Username :</label>
-            <select id="username" name="username" required class="chosen-select" data-placeholder="Select a username...">
-                <!-- Options will be populated dynamically -->
-            </select>
-            <label for="favoriteArtists">Favorite Artists :</label>
-            <!-- Use a multiple select dropdown menu for selecting favorite artists -->
-            <select id="favoriteArtists" name="favoriteArtists[]" multiple required class="chosen-select" data-placeholder="Select favorite artists...">
-                <!-- Options will be populated dynamically -->
-            </select>
-            <label for="favoriteGenres">Favorite Genres :</label>
-            <!-- Use a multiple select dropdown menu for selecting favorite genres -->
-            <select id="favoriteGenres" name="favoriteGenres[]" multiple required class="chosen-select" data-placeholder="Select favorite genres...">
-                <!-- Options will be populated dynamically -->
-            </select>
-            <label for="favoriteSongs">Favorite Songs :</label>
-            <!-- Use a multiple select dropdown menu for selecting favorite songs -->
-            <select id="favoriteSongs" name="favoriteSongs[]" multiple required class="chosen-select" data-placeholder="Select favorite songs...">
-                <!-- Options will be populated dynamically -->
-            </select>
-            <label for="favoriteAlbums">Favorite Albums :</label>
-            <!-- Use a multiple select dropdown menu for selecting favorite albums -->
-            <select id="favoriteAlbums" name="favoriteAlbums[]" multiple required class="chosen-select" data-placeholder="Select favorite albums...">
-                <!-- Options will be populated dynamically -->
-            </select>
-            <button type="submit">Submit</button>
-        </form>
-        <h2>Get Song Recommendations</h2>
-        <form id="songRecommendationForm">
-            <label for="songName">Song Name:</label>
-            <input type="text" id="songName" name="songName" required>
-            <button type="button" onclick="getSongRecommendations()">Get Recommendations</button>
-        </form>
-        
-        <div id="recommendationsContainer"></div>
-        
-    </div>
+    <header class="header">
+        <div class="container">
+            <a href="#">
+                <img class="logo" alt="Omnifood logo" src="logobe.png" />
+            </a>
     
-    <!-- Include Chosen.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
-    <script>
-        // Initialize Chosen.js for the select element with the 'chosen-select' class
-        $(document).ready(function(){
-            $('.chosen-select').chosen();
+            <nav class="main-nav">
+                <ul class="main-nav-list">
+                    <li><a href="add_user.html" class="main-nav-link">Add User</a></li>
+                    <li><a href="add_artist.html" class="main-nav-link">Add Artist</a></li>
+                    <li><a href="add_song.html" class="main-nav-link">Add Song</a></li>
+                    <li><a href="user_preferences.html" class="main-nav-link">User Preferences</a></li>
+                    <li><a href="get_song_recommendations.html" class="main-nav-link">Get Song Recommendations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        // Function to populate the username dropdown
-        function populateUsernameDropdown(usernames) {
-            // Clear existing options
-            $('#username').empty();
-            //console.log('Usernames fetched successfully:', usernames);
-            
-            // Populate the select dropdown with usernames
-            usernames.forEach(function(username) {
-                $('#username').append('<option value="' + username + '">' + username + '</option>');
-            });
-
-            // Trigger chosen:updated event after dynamically adding options
-            $('#username').trigger('chosen:updated');
-        }
-
-    // Fetch usernames
-    $.ajax({
-        url: '/getUsers',
-        type: 'GET',
-        success: function(data) {
-            var usernames = data.map(function(user) {
-                return user.username;
-            });
-           
-            populateUsernameDropdown(usernames);
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching usernames:', error);
-        }
-    });
-
-
-
-        // Populate the artist dropdown
-        $.ajax({
-            url: '/getArtists',
-            type: 'GET',
-            success: function(data) {
-                data.forEach(function(artist) {
-                    $('#artist').append('<option value="' + artist._id + '">' + artist.artistName + '</option>');
-                });
-                // Trigger chosen:update event after dynamically adding options
-                $('#artist').trigger('chosen:updated');
-            },
-            error: function(err) {
-                console.error('Error fetching artists:', err);
-            }
-        });
+    <section class="main-content">
+        <div class="container">
+            <div class="bio-section">
+                <div class="bio-container">
+                    <div class="bio-content show">
+                        <h2>Welcome to TuneScape</h2>
+                        <p>Embark on a musical journey with TuneScape. Whether you're an avid music enthusiast or just getting started, our platform offers a personalized experience tailored to your taste. Discover new artists, songs, and albums, and let us curate recommendations just for you. With TuneScape, the perfect soundtrack to your day is just a click away.</p>
+                        <button class="how-it-works-button">Learn More ↓</button> <!-- Add the button -->
+                        <!-- Add more content here as needed -->
+                    </div>
+                </div>
+                <div class="bio-image">
+                    <img src="betthoven.png" alt="Beethoven">
+                </div>
+            </div>
+        </div>
+        <div id="how-it-works-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>How It Works</h2>
+                <p>Welcome to TuneScape! Here's how the platform works:</p>
+                <ol>
+                    <li>Sign up for a free account to get started.</li>
+                    <li>Explore our vast library of artists, songs, and albums.</li>
+                    <li>Discover new music tailored to your taste with personalized recommendations.</li>
+                    <li>Create playlists, save your favorite tracks, and share your musical journey with friends.</li>
+                    <li>Connect with fellow music enthusiasts through our community features.</li>
+                </ol>
+            </div>
+        </div>
         
-        // Populate the album dropdown based on the selected artist
-        $('#artist').change(function() {
-            var selectedArtist = $(this).val();
-            $('#album').empty(); // Clear the dropdown
-            // Fetch albums for the selected artist
-            $.ajax({
-                url: '/getAlbums/' + selectedArtist,
-                type: 'GET',
-                success: function(data) {
-                    data.forEach(function(album) {
-                        $('#album').append('<option value="' + album._id + '">' + album.albumTitle + '</option>');
-                    });
-                    // Trigger chosen:update event after dynamically adding options
-                    $('#album').trigger('chosen:updated');
-                },
-                error: function(err) {
-                    console.error('Error fetching albums:', err);
-                }
-            });
-        });
-
-        // Function to populate dropdown options for genres
-        function populateGenresDropdown(selectId) {
-            // Array of genre options
-            const genres = [
-                "Alternative",
-                "Blues",
-                "Classical",
-                "Country",
-                "Dance",
-                "Electronic",
-                "Folk",
-                "Hip Hop/Rap",
-                "Indie",
-                "Jazz",
-                "Latin",
-                "Metal",
-                "Pop",
-                "R&B/Soul",
-                "Reggae",
-                "Rock",
-                "World"
-            ];
-
-        // Function to get song recommendations
-        function getSongRecommendations() {
-            const songName = $('#songName').val();
-
-            $.ajax({
-                url: '/getSongRecommendations/' + encodeURIComponent(songName),
-                type: 'GET',
-                success: function(recommendations) {
-                    displayRecommendations(recommendations);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching recommendations:', error);
-                }
-            });
-        }
-
-        // Function to display recommendations on the page
-        function displayRecommendations(recommendations) {
-            const recommendationsContainer = $('#recommendationsContainer');
-            recommendationsContainer.empty();
-
-            if (recommendations.length > 0) {
-                recommendationsContainer.append('<h3>Recommended similar songs:</h3>');
-                const list = $('<ul></ul>');
-                recommendations.forEach(function(recommendation) {
-                    list.append('<li>' + recommendation.title + ' by ' + recommendation.artist + '</li>');
-                });
-                recommendationsContainer.append(list);
-            } else {
-                recommendationsContainer.append('<p>No similar songs found.</p>');
-            }
-        }
-
-            
-            // Populate the dropdown with genre options
-            const select = $('#' + selectId);
-            genres.forEach(genre => {
-                select.append('<option value="' + genre + '">' + genre + '</option>');
-            });
-
-            // Trigger chosen:update event after dynamically adding options
-            select.trigger('chosen:updated');
-        }
-
-        // Function to populate dropdown options
-        function populateDropdown(url, selectId, optionValueField, optionTextField) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(data) {
-                    data.forEach(function(item) {
-                        $('#' + selectId).append('<option value="' + item[optionValueField] + '">' + item[optionTextField] + '</option>');
-                    });
-                    // Trigger chosen:update event after dynamically adding options
-                    $('#' + selectId).trigger('chosen:updated');
-                },
-                error: function(err) {
-                    console.error('Error fetching data:', err);
-                }
-            });
-        }
-
-        // Populate dropdowns for favorite artists, genres, songs, and albums
-        populateDropdown('/getArtists', 'favoriteArtists', '_id', 'artistName');
-        populateGenresDropdown('favoriteGenres');
-        populateDropdown('/getSongs', 'favoriteSongs', '_id', 'title');
-        populateDropdown('/getAlbums', 'favoriteAlbums', '_id', 'albumTitle');
-    });
-    </script>
+    </section>
+    
+    
 </body>
 </html>
