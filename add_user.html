@@ -6,12 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="user.css">
   <link rel="icon" type="image/png" href="favicon-32x32.png"> <!-- Add favicon link -->
 </head>
 <body>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+        togglePasswordVisibility('loginPassword', 'toggleLoginPassword');
+      });
 
+      document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
+        togglePasswordVisibility('registerPassword', 'toggleRegisterPassword');
+      });
+
+      function togglePasswordVisibility(passwordFieldId, toggleIconId) {
+        const passwordInput = document.getElementById(passwordFieldId);
+        const icon = document.getElementById(toggleIconId);
+
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      }
+    });
         // Redirect to the registration section
         function redirectToRegister() {
             window.location.href = '/add_user.html/register';
@@ -121,6 +145,8 @@ function register() {
 											<div class="form-group mt-2">
                                                 <input type="password" class="form-style" id="loginPassword" placeholder="Password">
 												<i class="input-icon uil uil-lock-alt"></i>
+                                                <!-- Add the toggle icon for password visibility -->
+                                                <span class="password-toggle" id="toggleLoginPassword"><i class="fa fa-eye"></i></span>
 											</div>
                                             <button class="btn mt-4" onclick="login()">Login</button>
                       <p class="mb-0 mt-4 text-center">Forgot your password?</p>
@@ -142,6 +168,8 @@ function register() {
 											<div class="form-group mt-2">
 												<input type="password" class="form-style"  id="registerPassword" placeholder="Password">
 												<i class="input-icon uil uil-lock-alt"></i>
+                                                <!-- Add the toggle icon for password visibility -->
+                                                <span class="password-toggle" id="toggleRegisterPassword"><i class="fa fa-eye"></i></span>
 											</div>
                                             <button class="btn mt-4" onclick="register()">Register</button>
 				      					</div>
