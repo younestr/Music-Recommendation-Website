@@ -4,7 +4,8 @@ body{
 	font-weight: 300;
 	line-height: 1.7;
 	color: #ffeba7;
-	background-color: #1f2029;
+	background-color: rgba(170, 127, 27, 1);
+  /*background-image: url('021 True Sunset.png');*/
 }
 a:hover {
 	text-decoration: none;
