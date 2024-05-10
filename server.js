@@ -159,6 +159,42 @@ app.post('/register', async (req, res) => {
 });
 
 
+
+// Route to handle user login
+app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+
+        // Check if username and password are provided
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username or password cannot be null' });
+        }
+
+        // Find the user by username
+        const user = await User.findOne({ username });
+
+        // If user not found
+        if (!user) {
+            return res.status(401).json({ message: 'Username not found' });
+        }
+
+        // Check if password matches
+        if (password !== user.password) {
+            return res.status(401).json({ message: 'Invalid username or password' });
+        }
+
+        // Password is correct, user is authenticated
+        // You may set up a session or generate a token here
+
+        // Redirect or send response indicating successful login
+        res.status(200).json({ message: 'Login successful' });
+    } catch (error) {
+        console.error('Login failed:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 // Route to fetch all users
 app.get('/getUsers', async (req, res) => {
     try {
