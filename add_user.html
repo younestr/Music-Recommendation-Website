@@ -21,30 +21,40 @@
         function redirectToLogin() {
             window.location.href = '/add_user.html/login';
         }
-        function login() {
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            const data = { username, password };
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Redirect to login successful page or do something else
-                    window.location.href = '/login-success.html';
-                } else {
-                    // Handle login error, e.g., display error message to the user
-                    console.error('Login failed');
-                }
-            })
-            .catch(error => {
-                console.error('Login failed:', error);
+function login() {
+    const username = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+    const data = { username, password };
+    console.log('Username:', username);
+    console.log('Password:', password);
+
+
+    console.log('Data:', data);
+    
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            // Redirect to login successful page or do something else
+            window.location.href = '/';
+        } else {
+            // Handle login error, log response details
+            console.error('Login failed:', response.status, response.statusText);
+            response.json().then(data => {
+                console.error('Error message:', data.message);
             });
         }
+    })
+    .catch(error => {
+        console.error('Login failed:', error);
+    });
+}
+
 function register() {
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
@@ -69,7 +79,7 @@ function register() {
     .then(response => {
         if (response.ok) {
             // Redirect to registration successful page or do something else
-            window.location.href = '/register-success.html';
+            window.location.href = '/add_user.html';
         } else {
             // Handle registration error, e.g., display error message to the user
             response.json().then(data => {
@@ -105,11 +115,11 @@ function register() {
 										<div class="section text-center">
 											<h4 class="mb-4 pb-3">Log In</h4>
 											<div class="form-group">
-												<input type="Username" class="form-style" placeholder="Username">
+                                                <input type="text" class="form-style" id="loginUsername" placeholder="Username">
 												<i class="input-icon uil uil-user"></i>
 											</div>	
 											<div class="form-group mt-2">
-                                                <input type="password" class="form-style" placeholder="Password">
+                                                <input type="password" class="form-style" id="loginPassword" placeholder="Password">
 												<i class="input-icon uil uil-lock-alt"></i>
 											</div>
                                             <button class="btn mt-4" onclick="login()">Login</button>
