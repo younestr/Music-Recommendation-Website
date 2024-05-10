@@ -92,6 +92,19 @@ display: none;
   transform-style: preserve-3d;
   transition: all 600ms ease-out; 
 }
+/* New CSS for password input container and toggle icon */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px; /* Adjust this value to set the distance from the right edge */
+  cursor: pointer;
+}
+
 .card-front, .card-back {
   width: 100%;
   height: 100%;
