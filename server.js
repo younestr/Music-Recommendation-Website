@@ -6,10 +6,11 @@ const bcrypt = require('bcrypt');
 const port = 3019;
 
 
-
 const app = express();
 app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // Add this line to parse JSON bodies
+
 
 mongoose.connect('mongodb://127.0.0.1:27017/musicRec_database', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
@@ -22,6 +23,8 @@ db.once('open', () => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'form.html'));
 });
+
+
 
 
 // Serve the add_artist.html file
@@ -118,114 +121,43 @@ const UserPreferencesSchema = new mongoose.Schema({
 
 const UserPreferences = mongoose.model('UserPreferences', UserPreferencesSchema);
 
-// Handle user registration
 app.post('/register', async (req, res) => {
     try {
-        const { registerUsername, registerEmail, registerPassword } = req.body;
-
-        // Check if the username or email already exists
-        const existingUser = await User.findOne({ $or: [{ username: registerUsername }, { email: registerEmail }] });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username or email already exists' });
+        
+        console.log('req body was', req.body)
+        console.log('req params were', req.params)
+        console.log('req query was', req.query)
+        
+        const { username, email, password } = req.body; // Corrected object property names
+        
+        // Check if username and password are not null
+        if (!username || !email || !password) {
+            return res.status(400).json({ message: 'Username or password cannot be null' });
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(registerPassword, 10);
+        // Check if the username or email already exists
+        const existingUser = await User.findOne({ username: username });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username already exists', user: username });
+        }
 
         // Create a new user
         const newUser = new User({
-            username: registerUsername,
-            email: registerEmail,
-            password: hashedPassword,
+            username: username,
+            email: email,
+            password: password,
         });
 
         // Save the user to the database
         await newUser.save();
 
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'User registered successfully', user: newUser });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
-
-// Handle user submission
-app.post('/postUser', (req, res) => {
-    const newUser = new User({
-        username: req.body.usernameo, // Save the username
-        email: req.body.email // Save the email
-    });
-
-    newUser.save()
-        .then(user => {
-            console.log('User saved successfully:', user);
-            res.redirect('/'); // Redirect to the root path after successful submission
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).send('Error saving user to database');
-        });
-});
-
-// Handle artist submission
-app.post('/postArtist', async (req, res) => {
-    const genreArray = Array.isArray(req.body.genre) ? req.body.genre : [req.body.genre];
-    const newArtist = new Artist({
-        artistName: req.body.artistName,
-        genre: genreArray,
-        albums: [] // Initialize albums array
-    });
-
-    try {
-        const savedArtist = await newArtist.save();
-        console.log('Artist saved successfully:', savedArtist);
-        // Save albums for the artist
-        await saveAlbums(savedArtist._id, req.body);
-        res.redirect('/'); // Redirect to the root path after successful submission
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error saving artist to database');
-    }
-});
-
-// Function to save albums associated with the artist
-async function saveAlbums(artistId, body) {
-    // Extract album data from the request body
-    const albumsData = [
-        { title: body.albumTitle1, releaseDate: body.releaseDate1 },
-        { title: body.albumTitle2, releaseDate: body.releaseDate2 }
-    ];
-
-    // Loop through each album data and save it
-    for (const albumData of albumsData) {
-        const newAlbum = new Album({
-            albumTitle: albumData.title,
-            releaseDate: albumData.releaseDate,
-            artist: artistId
-        });
-        await newAlbum.save();
-    }
-}
-
-// Handle song submission
-app.post('/postSong', async (req, res) => {
-    try {
-        const newSong = new Song({
-            title: req.body.title,
-            artist: req.body.artist,
-            genre: Array.isArray(req.body.genre) ? req.body.genre : [req.body.genre], // Ensure genre is an array
-            album: req.body.album
-        });
-
-        const savedSong = await newSong.save();
-        console.log('Song saved successfully:', savedSong);
-        res.redirect('/'); // Redirect to the root path after successful submission
-    } catch (err) {
-        console.error('Error saving song:', err);
-        res.status(500).send('Error saving song to database');
-    }
-});
 
 // Route to fetch all users
 app.get('/getUsers', async (req, res) => {
