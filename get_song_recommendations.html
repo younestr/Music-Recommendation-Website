@@ -15,12 +15,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
 </head>
 <body>
+    <script>
+
+        // Function to make AJAX request and get song recommendations
+        function getRecommendations() {
+            // Retrieve the value of songName from the input field
+            var songName = $('#songName').val();
+
+            // Make the AJAX request
+            $.ajax({
+                url: '/getSongRecommendations',
+                type: 'POST',
+                data: { song_name: songName },
+                success: function(recommendations) {
+                    // Display the recommendations
+                    displayRecommendations(recommendations);
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error('Error fetching recommendations:', error);
+                }
+            });
+        }
+        // Function to display recommendations on the page
+        function displayRecommendations(recommendations) {
+            const recommendationsContainer = $('#recommendationsContainer');
+            recommendationsContainer.empty();
+
+            if (recommendations.length > 0) {
+                recommendationsContainer.append('<h3>Recommended similar songs:</h3>');
+                const list = $('<ul></ul>');
+                recommendations.forEach(function(recommendation) {
+                    list.append('<li>' + recommendation.title + ' by ' + recommendation.artist + '</li>');
+                });
+                recommendationsContainer.append(list);
+            } else {
+                recommendationsContainer.append('<p>No similar songs found.</p>');
+            }
+        }
+
+    </script>
     <div class="container">
         <h2>Get Song Recommendations</h2>
         <form id="songRecommendationForm">
             <label for="songName">Song Name:</label>
             <input type="text" id="songName" name="songName" required>
-            <button type="button" onclick="getSongRecommendations()">Get Recommendations</button>
+            <button type="button" onclick="getRecommendations()">Get Recommendations</button>
         </form>
         
         <div id="recommendationsContainer"></div>
@@ -142,22 +182,7 @@
             });
         }
 
-        // Function to display recommendations on the page
-        function displayRecommendations(recommendations) {
-            const recommendationsContainer = $('#recommendationsContainer');
-            recommendationsContainer.empty();
-
-            if (recommendations.length > 0) {
-                recommendationsContainer.append('<h3>Recommended similar songs:</h3>');
-                const list = $('<ul></ul>');
-                recommendations.forEach(function(recommendation) {
-                    list.append('<li>' + recommendation.title + ' by ' + recommendation.artist + '</li>');
-                });
-                recommendationsContainer.append(list);
-            } else {
-                recommendationsContainer.append('<p>No similar songs found.</p>');
-            }
-        }
+        
 
             
             // Populate the dropdown with genre options
