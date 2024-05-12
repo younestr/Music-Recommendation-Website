@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const fetch = require('node-fetch');
 const port = 3019;
 
 
@@ -59,6 +60,11 @@ const UserSchema = new mongoose.Schema({
     email: String,
     password: String // Hashed password will be stored
 });
+
+// Add unique indexes to enforce uniqueness of username and email
+UserSchema.index({ username: 1 }, { unique: true });
+UserSchema.index({ email: 1 }, { unique: true });
+
 const User = mongoose.model('User', UserSchema);
 
 // Define Mongoose schema for Artists
@@ -136,9 +142,18 @@ app.post('/register', async (req, res) => {
         }
 
         // Check if the username or email already exists
-        const existingUser = await User.findOne({ username: username });
-        if (existingUser) {
+        const existingUsername = await User.findOne({ username: username });
+        const existingEmail = await User.findOne({ email: email });
+
+        console.log('Existing Username:', existingUsername);
+        console.log('Existing Email:', existingEmail);
+        
+        if (existingUsername) {
             return res.status(400).json({ message: 'Username already exists', user: username });
+        }
+
+        if (existingEmail) {
+            return res.status(400).json({ message: 'Email already exists', email: email });
         }
 
         // Create a new user
@@ -290,18 +305,32 @@ app.post('/postUserPreferences', async (req, res) => {
     }
 });
 
+
 // Route to get song recommendations
-app.get('/getSongRecommendations/:songName', async (req, res) => {
+app.post('/getSongRecommendations', async (req, res) => {
     try {
-        const songName = req.params.songName;
-        // Call the recommend_similar_songs function with the provided song name
-        const recommendations = await recommend_similar_songs(songName);
+        // Retrieve relevant data from MongoDB collections
+        // For example:
+        // const artistsData = await Artist.find({}); // Retrieve all artists
+        // const genresData = await Genre.find({}); // Retrieve all genres
+        // const songsData = await Song.find({}); // Retrieve all songs
+
+        // Process the data to generate recommendations
+        // For example:
+        // const recommendations = generateRecommendations(artistsData, genresData, songsData, req.body.userPreferences);
+
+        // Dummy response for testing
+        const recommendations = ['Taxman', 'Forever', 'TELEKENISIS'];
+
+        // Return the recommendations as JSON
         res.json(recommendations);
-    } catch (err) {
-        console.error('Error fetching song recommendations:', err);
+    } catch (error) {
+        console.error('Error fetching song recommendations:', error);
         res.status(500).send('Error fetching song recommendations');
     }
 });
+
+
 
 // Listen on port
 app.listen(port, () => {
