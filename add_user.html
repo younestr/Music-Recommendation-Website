@@ -78,21 +78,29 @@ function login() {
         console.error('Login failed:', error);
     });
 }
+// Function to validate email format using a regular expression (regex)
+function validateEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for basic email format validation
+        return regex.test(email);
+    }
 
-function register() {
+    function register() {
+    // Retrieve user input values
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
-    //const data = { username, email, password };
-        
-    console.log('Username:', username);
-    console.log('Email:', email);
-    console.log('Password:', password);
 
+    // Perform additional email validation
+    if (!validateEmail(email)) {
+        // Display an error message and prevent form submission if email format is invalid
+        alert('Please enter a valid email address.');
+        return;
+    }
+
+    // Construct user data object
     const data = { username, email, password };
 
-    console.log('Data:', data);
-
+    // Submit registration data via fetch API
     fetch('/register', {
         method: 'POST',
         headers: {
@@ -102,23 +110,25 @@ function register() {
     })
     .then(response => {
         if (response.ok) {
-            // Redirect to registration successful page or do something else
+            // Redirect to registration successful page or perform other actions
             window.location.href = '/add_user.html';
-        } else {
-            // Handle registration error, e.g., display error message to the user
+        } else if (response.status === 400) {
+            // Handle username or email already exists error
             response.json().then(data => {
                 console.error(data.message);
-                if (data.user) {
-                    // Display existing user information
-                    console.log('Existing user:', data.user);
-                    // Example: display existing user info in an alert
-                    alert(`User already exists. Username: ${data.user.username}, Email: ${data.user.email}`);
+                if (data.message.includes('Username already exists')) {
+                    alert(`Username '${username}' already exists. Please choose a different username.`);
+                } else if (data.message.includes('Email already exists')) {
+                    alert(`Email '${email}' already exists. Please use a different email.`);
                 }
             });
+        } else {
+            // Handle other registration errors
+            console.error('Registration failed:', response.status, response.statusText);
         }
     })
     .catch(error => {
-        console.error('Registration failed catch:', error);
+        console.error('Registration failed:', error);
     });
 }
 
@@ -162,8 +172,9 @@ function register() {
 												<i class="input-icon uil uil-user"></i>
 											</div>
                                             <div class="form-group mt-2">
-												<input type="email" class="form-style" id="registerEmail" placeholder="Email">
-												<i class="input-icon uil uil-at"></i>
+                                                <input type="email" class="form-style" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                                                id="registerEmail" placeholder="Email" required>
+                                                                                         <i class="input-icon uil uil-at"></i>
 											</div>
 											<div class="form-group mt-2">
 												<input type="password" class="form-style"  id="registerPassword" placeholder="Password">
