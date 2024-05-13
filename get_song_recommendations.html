@@ -19,25 +19,22 @@
 
         // Function to make AJAX request and get song recommendations
         function getRecommendations() {
-            // Retrieve the value of songName from the input field
             var songName = $('#songName').val();
-
-            // Make the AJAX request
             $.ajax({
                 url: '/getSongRecommendations',
                 type: 'POST',
-                data: { song_name: songName },
+                data: { songName: songName },
                 success: function(recommendations) {
-                    // Display the recommendations
+                    console.log(recommendations)
                     displayRecommendations(recommendations);
                 },
                 error: function(xhr, status, error) {
-                    // Handle errors
                     console.error('Error fetching recommendations:', error);
                 }
             });
         }
-        // Function to display recommendations on the page
+
+        
         function displayRecommendations(recommendations) {
             const recommendationsContainer = $('#recommendationsContainer');
             recommendationsContainer.empty();
@@ -53,6 +50,8 @@
                 recommendationsContainer.append('<p>No similar songs found.</p>');
             }
         }
+
+
 
     </script>
     <div class="container">
@@ -166,21 +165,7 @@
                 "World"
             ];
 
-        // Function to get song recommendations
-        function getSongRecommendations() {
-            const songName = $('#songName').val();
-
-            $.ajax({
-                url: '/getSongRecommendations/' + encodeURIComponent(songName),
-                type: 'GET',
-                success: function(recommendations) {
-                    displayRecommendations(recommendations);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching recommendations:', error);
-                }
-            });
-        }
+        
 
         
 
