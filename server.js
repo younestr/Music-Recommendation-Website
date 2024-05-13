@@ -174,6 +174,57 @@ app.post('/register', async (req, res) => {
 });
 
 
+// Route to handle adding a new artist
+app.post('/postArtist', async (req, res) => {
+    try {
+        // Extract artist data from the request body
+        const { artistName, genre, albums } = req.body;
+
+        // Create a new Artist document
+        const newArtist = new Artist({
+            artistName: artistName,
+            genre: genre,
+            albums: albums
+        });
+
+        // Save the new artist to the database
+        await newArtist.save();
+
+        // Respond with a success message
+        res.status(201).json({ message: 'Artist added successfully', artist: newArtist });
+    } catch (error) {
+        // Handle errors
+        console.error('Error adding artist:', error);
+        res.status(500).json({ message: 'Error adding artist' });
+    }
+});
+
+// Route to handle adding a new song
+app.post('/postSong', async (req, res) => {
+    try {
+        // Extract song data from the request body
+        const { title, artist, genre, album } = req.body;
+
+        // Create a new Song document
+        const newSong = new Song({
+            title: title,
+            artist: artist,
+            genre: genre,
+            album: album
+        });
+
+        // Save the new song to the database
+        await newSong.save();
+
+        // Respond with a success message
+        res.status(201).json({ message: 'Song added successfully', song: newSong });
+    } catch (error) {
+        // Handle errors
+        console.error('Error adding song:', error);
+        res.status(500).json({ message: 'Error adding song' });
+    }
+});
+
 
 // Route to handle user login
 app.post('/login', async (req, res) => {
