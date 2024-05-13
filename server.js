@@ -309,20 +309,18 @@ app.post('/postUserPreferences', async (req, res) => {
 // Route to get song recommendations
 app.post('/getSongRecommendations', async (req, res) => {
     try {
-        // Retrieve relevant data from MongoDB collections
-        // For example:
-        // const artistsData = await Artist.find({}); // Retrieve all artists
-        // const genresData = await Genre.find({}); // Retrieve all genres
-        // const songsData = await Song.find({}); // Retrieve all songs
-
-        // Process the data to generate recommendations
-        // For example:
-        // const recommendations = generateRecommendations(artistsData, genresData, songsData, req.body.userPreferences);
+        const { songName } = req.body;
 
         // Dummy response for testing
-        const recommendations = ['Taxman', 'Forever', 'TELEKENISIS'];
+        const recommendations = [
+            { title: 'Green Grass of Tunnel', artist: 'múm' },
+            { title: 'M.E.M.P.H.I.S.', artist: 'Hypnotize Camp Posse' },
+            { title: 'Pehla Nasha', artist: 'Udit Narayan, Sadhana Sargam' },
+            { title: 'With Me', artist: 'Sum 41' },
+            { title: 'Laundry Room', artist: 'The Avett Brothers' }
+        ];
 
-        // Return the recommendations as JSON
+        // Return the recommendations
         res.json(recommendations);
     } catch (error) {
         console.error('Error fetching song recommendations:', error);
@@ -331,6 +329,64 @@ app.post('/getSongRecommendations', async (req, res) => {
 });
 
 
+// Function to calculate similarity with other songs
+async function calculateSimilarity(song) {
+    try {
+        // Query all songs from data_collection except the input song
+        const allSongs = await db.collection('data_collection').find({ name: { $ne: song.name } }).toArray();
+
+        // Calculate similarity with each song
+        const similarities = allSongs.map(otherSong => ({
+            title: otherSong.name,
+            similarity: calculateSimilarityScore(song, otherSong)
+        }));
+
+        // Sort by similarity score in descending order
+        similarities.sort((a, b) => b.similarity - a.similarity);
+
+        // Return top N recommendations
+        return similarities.slice(0, 5);
+    } catch (error) {
+        console.error('Error calculating similarity:', error);
+        return [];
+    }
+}
+
+// Function to calculate similarity score between two songs
+function calculateSimilarityScore(song1, song2) {
+    // Define attributes to compare and their weights (adjust weights as needed)
+    const attributesAndWeights = {
+        valence: 1,
+        acousticness: 1,
+        danceability: 1,
+        energy: 1,
+        year: 1,
+        duration_ms: 1,
+        explicit: 1,
+        instrumentalness: 1,
+        key: 1,
+        liveness: 1,
+        loudness: 1,
+        mode: 1,
+        popularity: 1,
+        speechiness: 1,
+        tempo: 1
+    };
+
+    // Calculate Euclidean distance between attribute vectors of the two songs
+    let squaredDifferencesSum = 0;
+    for (const attr in attributesAndWeights) {
+        if (Object.hasOwnProperty.call(attributesAndWeights, attr)) {
+            const weight = attributesAndWeights[attr];
+            squaredDifferencesSum += weight * Math.pow(song1[attr] - song2[attr], 2);
+        }
+    }
+    const euclideanDistance = Math.sqrt(squaredDifferencesSum);
+
+    // Convert Euclidean distance to a similarity score
+    // Adjust as needed based on your preference
+    return 1 / (1 + euclideanDistance);
+}
 
 // Listen on port
 app.listen(port, () => {
