@@ -4,7 +4,6 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
 - [Setup and Installation](#setup-and-installation)
 - [Running the Project](#running-the-project)
 - [Endpoints](#endpoints)
@@ -29,4 +28,3 @@ The Music Recommendations System is a web application that allows users to regis
 - **Database**: MongoDB, Mongoose
 - **Others**: bcrypt for password hashing, body-parser for parsing request bodies, path for handling file paths
 
-## Project Structure
