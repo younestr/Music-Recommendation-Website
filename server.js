@@ -362,14 +362,15 @@ app.post('/getSongRecommendations', async (req, res) => {
     try {
         const { songName } = req.body;
 
-        // Dummy response for testing
-        const recommendations = [
-            { title: 'Green Grass of Tunnel', artist: 'múm' },
-            { title: 'M.E.M.P.H.I.S.', artist: 'Hypnotize Camp Posse' },
-            { title: 'Pehla Nasha', artist: 'Udit Narayan, Sadhana Sargam' },
-            { title: 'With Me', artist: 'Sum 41' },
-            { title: 'Laundry Room', artist: 'The Avett Brothers' }
-        ];
+        // Retrieve attributes of the requested song from data_collection
+        const song = await db.collection('data_collection').findOne({ name: songName });
+
+        if (!song) {
+            return res.status(404).json({ message: 'Song not found' });
+        }
+
+        // Fetch similar songs based on the attributes of the requested song
+        const recommendations = await calculateSimilarSongs(song);
 
         // Return the recommendations
         res.json(recommendations);
